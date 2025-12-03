@@ -15,6 +15,7 @@ namespace app::ui::state {
         static constexpr size_t kSubjectBuf = 64;
         static constexpr size_t kDateBuf = 32;
         static constexpr size_t kPageSize = 20;
+        static constexpr size_t kPathBuf = 256;
 
         // поп-апы
         bool open_add{};
@@ -26,8 +27,11 @@ namespace app::ui::state {
         bool del_err{};
         bool del_none_err{};
         bool search_err{};
+        bool save_err{};
 
         std::string err_details;
+
+        bool open_save_dialog{};
 
         // поиск / кеш
         bool search_active{};
@@ -41,6 +45,7 @@ namespace app::ui::state {
         char subject[kSubjectBuf] = "";
         int grade = 5;
         char date[kDateBuf] = "";
+        char path[kPathBuf] = "";
 
         // пагинация
         size_t current_page{};

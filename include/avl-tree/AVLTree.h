@@ -40,9 +40,7 @@ class AVLTree {
     template<typename Callback>
     Node* insert(Node *node, T key, int id, Callback&& visit);
     static Node* find_min_node(Node *node);
-    static Node* find_max_node(Node *node);
     static Node* delete_min_node(Node *node);
-    static Node* delete_max_node(Node *node);
     static Node* delete_node(Node *node, T key, int id);
     static Node* delete_node(Node *node, T key);
     static void get_tree_in_order(const Node *node, int row, int col, int height, std::vector<std::vector<T>> &ans);
@@ -265,13 +263,6 @@ typename AVLTree<T>::Node * AVLTree<T>::find_min_node(Node *node) {
     return node->left ? find_min_node(node->left) : node;
 }
 
-// find_max_node осуществляет поиск максимального узла относительно дерева, для которого переданный узел
-// является корнем
-template <typename T>
-typename AVLTree<T>::Node * AVLTree<T>::find_max_node(Node *node) {
-    return node->right ? find_max_node(node->right) : node;
-}
-
 template <typename T>
 typename AVLTree<T>::Node * AVLTree<T>::delete_min_node(Node *node) {
     if (node->left == nullptr) {
@@ -279,17 +270,6 @@ typename AVLTree<T>::Node * AVLTree<T>::delete_min_node(Node *node) {
     }
 
     node->left = delete_min_node(node->left);
-
-    return balance(node);
-}
-
-template <typename T>
-typename AVLTree<T>::Node * AVLTree<T>::delete_max_node(Node *node) {
-    if (node->right == nullptr) {
-        return node->left;
-    }
-
-    node->right = delete_max_node(node->right);
 
     return balance(node);
 }
@@ -312,13 +292,13 @@ typename AVLTree<T>::Node * AVLTree<T>::delete_node(Node *node, T key, int id) {
             Node* rightNode = node->right;
             delete node;
 
-            if (!leftNode) return rightNode;
+            if (!rightNode) return leftNode;
 
-            Node* max = find_max_node(leftNode);
-            max->left = delete_max_node(leftNode);
-            max->right = rightNode;
+            Node* min = find_min_node(rightNode);
+            min->right = delete_min_node(rightNode);
+            min->left = leftNode;
 
-            return balance(max);
+            return balance(min);
         }
     }
 
@@ -338,13 +318,13 @@ typename AVLTree<T>::Node * AVLTree<T>::delete_node(Node *node, T key) {
         Node* rightNode = node->right;
         delete node;
 
-        if (!leftNode) return rightNode;
+        if (!rightNode) return leftNode;
 
-        Node* max = find_max_node(leftNode);
-        max->left = delete_max_node(leftNode);
-        max->right = rightNode;
+        Node* min = find_min_node(rightNode);
+        min->right = delete_min_node(rightNode);
+        min->left = leftNode;
 
-        return balance(max);
+        return balance(min);
     }
 
     return balance(node);
@@ -582,19 +562,19 @@ std::string AVLTree<T>::structure() const {
         if (!n->left && !n->right) return;
 
         int midx = cx(col);
-        canvas[y0 + 3][midx] = U'|';
+        canvas[y0 + 3][midx] = '│';
         int offset = 1 << (level - row - 1);
 
         if (n->left) {
             int cl = col - offset, xl = cx(cl);
-            for (int x = xl; x < midx; ++x) canvas[y0 + 3][x] = U'-';
-            canvas[y0 + 3][xl] = U'+';
+            for (int x = xl; x < midx; ++x) canvas[y0 + 3][x] = '─';
+            canvas[y0 + 3][xl] = '╭';
             self(self, n->left, row + 1, cl, level);
         }
         if (n->right) {
             int cr = col + offset, xr = cx(cr);
-            for (int x = midx + 1; x <= xr; ++x) canvas[y0 + 3][x] = U'-';
-            canvas[y0 + 3][xr] = U'+';
+            for (int x = midx + 1; x <= xr; ++x) canvas[y0 + 3][x] = '─';
+            canvas[y0 + 3][xr] = '╮';
             self(self, n->right, row + 1, cr, level);
         }
     };
@@ -819,15 +799,10 @@ template<typename T>
 template<typename Callback>
 int* AVLTree<T>::to_arr(T key, size_t &count, Callback&& visit) {
     auto *node = search(key, visit);
-    if (node == nullptr) {
-        count = 0;
-        return nullptr;
-    }
+    if (node == nullptr) return nullptr;
 
     count = node->list.count();
-    if (count == 0) {
-        return nullptr;
-    }
+    if (count == 0) return nullptr;
 
     auto ids = new int[count];
     for (int i = 0; i < count; ++i) {

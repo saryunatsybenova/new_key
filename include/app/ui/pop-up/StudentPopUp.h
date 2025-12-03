@@ -121,6 +121,39 @@ namespace app::ui::pop_up {
         }
         modal::error_modal("Ошибка поиска", state.search_err, state.err_details.c_str());
     }
+
+    inline void student_save_popup(repo::SchoolRepo &repo, state::StudentState &state) {
+        if (state.open_dialog) {
+            ImGui::OpenPopup("Сохранить в файл");
+            state.open_dialog = false;
+        }
+        if (ImGui::BeginPopupModal("Сохранить в файл", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+            modal::ModalGuard guard(true);
+
+            ImGui::InputText("Путь к файлу",
+                state.path,
+                state::StudentState::kPathBuf);
+            if (ImGui::Button("Сохранить")) {
+                try {
+                    repo.save_student_repo(
+                        state.path
+                    );
+                }
+                catch (const std::runtime_error& e) {
+                    state.save_err = true;
+                    state.err_details = e.what();
+                }
+                catch (...) {
+                    state.save_err = true;
+                }
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Отмена")) ImGui::CloseCurrentPopup();
+        }
+
+        modal::error_modal("Ошибка сохранения", state.save_err, "Таблица пуста, сохранять нечего");
+    }
 }
 
 #endif //STUDENTUIPOPUP_H

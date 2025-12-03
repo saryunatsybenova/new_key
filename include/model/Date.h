@@ -56,6 +56,8 @@ namespace model {
 
         static Date parse(const std::string& str);
 
+        [[nodiscard]] size_t ToNumber() const;
+
         [[nodiscard]] std::uint16_t year() const;
     };
 
@@ -99,6 +101,10 @@ namespace model {
            << month_to_str(month_) << ' '
            << year_;
         return os.str();
+    }
+
+    inline size_t Date::ToNumber() const {
+        return this->day_ + static_cast<std::uint8_t>(month_) + this->year_;
     }
 
     inline Date Date::parse(const std::string &str) {

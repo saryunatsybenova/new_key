@@ -94,14 +94,16 @@ namespace hash {
 
     template<typename Key, typename Val>
     size_t HashTable<Key, Val>::primary_hash(const Key &key) const {
-        std::string key1 = key.to_string();
+        std::string name = key.get_name().to_string();
+        size_t sum_date = key.get_birth_date().ToNumber();
         size_t sum = 0;
         std::string hash_line = "";
-        for (const unsigned char c: key1) {
+        for (const unsigned char c: name) {
             sum += static_cast<size_t>(c);
             hash_line += std::to_string(c) + "+";
         }
-
+        sum += sum_date;
+        hash_line += std::to_string(sum_date);
         size_t hash = sum % cap_;
 
         Slog::info("Первичная хеш функция", Slog::opt("хеш", hash), Slog::opt("строка", hash_line), Slog::opt("сумма", sum));

@@ -17,7 +17,7 @@
 #include "repository/SchoolRepo.h"
 
 namespace app::ui::layout {
-    inline void render_students_dir(state::StudentState &state, repo::SchoolRepo &repo,
+    inline void render_students_dir(ui::state::StudentState &state, repo::SchoolRepo &repo,
                                    const repo::ToKey to_key) {
         // контекстное меню
         if (ImGui::BeginPopupContextWindow("student_ctx_menu",
@@ -25,6 +25,7 @@ namespace app::ui::layout {
             if (ImGui::MenuItem("Добавить")) state.open_add = true;
             if (ImGui::MenuItem("Удалить")) state.open_del = true;
             if (ImGui::MenuItem("Поиск")) state.open_search = true;
+            if (ImGui::MenuItem("Сохранить")) state.open_dialog = true;
             if (ImGui::MenuItem("Сбросить")) state.search_active = false;
             ImGui::EndPopup();
         }
@@ -32,6 +33,8 @@ namespace app::ui::layout {
         pop_up::student_add_popup(repo, state);
         pop_up::student_del_popup(repo, state, to_key);
         pop_up::student_search_popup(repo, state, to_key);
+        pop_up::student_save_popup(repo, state);
+
 
         Vector<model::Student> students;
         size_t count = 0;
@@ -58,6 +61,7 @@ namespace app::ui::layout {
             if (ImGui::MenuItem("Добавить")) state.open_add = true;
             if (ImGui::MenuItem("Удалить")) state.open_del = true;
             if (ImGui::MenuItem("Поиск")) state.open_search = true;
+            if (ImGui::MenuItem("Сохранить")) state.open_save_dialog = true;
             if (ImGui::MenuItem("Сбросить")) state.search_active = false;
             ImGui::EndPopup();
         }
@@ -65,6 +69,7 @@ namespace app::ui::layout {
         pop_up::grade_add_popup(repo, state);
         pop_up::grade_del_popup(repo, state, to_key);
         pop_up::grade_search_popup(repo, state, to_key);
+        pop_up::grade_save_popup(repo, state);
 
         Vector<model::Grade> grades;
         size_t count = 0;

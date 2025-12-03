@@ -13,6 +13,7 @@ namespace app::ui::state {
         static constexpr size_t kClassBuf = 16;
         static constexpr size_t kDateBuf = 32;
         static constexpr size_t kPageSize = 20;
+        static constexpr size_t kPathBuf = 256;
 
         // поп-апы
         bool open_add{};
@@ -23,8 +24,11 @@ namespace app::ui::state {
         bool add_err{};
         bool del_err{};
         bool search_err{};
+        bool save_err{};
 
         std::string err_details;
+
+        bool open_dialog{};
 
         // поиск
         bool search_active{};
@@ -37,6 +41,7 @@ namespace app::ui::state {
         char name[kNameBuf] = "";
         char class_name[kClassBuf] = "";
         char birth_date[kDateBuf] = "";
+        char path[kPathBuf] = "";
 
         // пагинация
         size_t current_page{};
